@@ -1,12 +1,4 @@
 #include "Menu.h"
-#include <iomanip>
-#define SEPARADOR "---------------------------------------------------------------------------------------------------------------------"
-#define RESET "\033[0m" // Restablece el color de la fuente.
-#define YELLOW "\033[33m" // Cambia el color de la fuente a amarillo.
-#define PURPURA "\033[35m" // Cambia el color de la fuente a purpura.
-#define CYAN "\033[36m" // Cambia el color de la fuente a cian.
-#define RED "\033[31m" // Cambia el color de la fuente a rojo.
-#define GREEN "\033[32m" // Cambia el color de la fuente a verde.
 
 MenuUI::MenuUI(int width)
     : cursor(0), consoleWidth(width) {}

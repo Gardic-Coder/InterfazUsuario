@@ -1,12 +1,16 @@
 #include <iostream>
 #include "Menu.h"
 #include <thread>
+#include <Windows.h>
 
 int main() {
-    vector<string> menuOptions = {"Inicio", "Opciones", "Salir"};
+    vector<string> menuOptions = {"Inicio", "Opciones", "Solicitar Dato", "Salir"};
     vector<string> subMenuOptions = {"Configurar", "Volver"};
     MenuUI menu(80); // Ancho de la consola definido como 80 caracteres
-
+	
+	SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
+	
     while (true) {
         menu.mostrarMenu(menuOptions);
         MenuUI::Tecla tecla = menu.getTecla();
@@ -23,8 +27,13 @@ int main() {
                     }
                     menu.moverCursor(subMenuOptions, subTecla);
                 }
-            } else if (opcionSeleccionada == 2) {
-                if (menu.confirmacion("Estas seguro que deseas salir?")) {
+            } else if (opcionSeleccionada == 2) { // Solicitar Dato
+                string dato = menu.solicitarDato<string>("Ingrese un saludo: ");
+                cout << "				Saludo ingresado: " << dato << endl;
+                cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
+                getch();
+			} else if (opcionSeleccionada == 3) {
+                if (menu.confirmacion("¿Estas seguro que deseas salir?")) {
                     cout << "Saliendo del menú..." << endl;
                     break;
                 } else {
