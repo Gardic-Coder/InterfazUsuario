@@ -1,54 +1,102 @@
-#include <iostream>
+/*
+	AUTOR: JUAN GARCIA
+
+Esta es una interfaz de menus basica para proyectos. La idea es facilitar el manejo de menus y la interaccion de un programa con el usuario.
+Este codigo de ejemplo sirve para mostrar las funcionalidades que trae Menu.h
+Aun faltan muchas funciones por añadir.
+
+Funciones añadidas:
+	* Ajuste automatico al tamaño de la ventana.
+	* Manejo de entradas del teclado.
+	* Manejo de interfaz por medio de flechas, enter y escape.
+	* Pantalla de carga.
+	* Pantalla de solicitud de dato.
+	* Pantalla de confirmacion de seleccion.
+	* Pantalla de menu para cualquier menu general.
+	* Centrado de textos en pantalla.
+	* Herramientas varias para el embellecimiento de la interfaz:
+		- Codigo de escape ANSI para cambiar colores.
+		- Metodo separador ajustado al tamaño de la pantalla.
+
+Proximas funciones:
+	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
+	* Funciones para el manejo de archivos de audio.
+	* Animaciones de transicion entre menus.
+	* Alinear los textos en el centro con un margen izquierdo.
+	* Interfaz de teclado para mover el cursor de derecha a izquierda.
+	* Mas colores.
+	* Cambiar tamaño de fuente.
+*/
 #include "Menu.h"
-#include <thread>
-#include <Windows.h>
+#include <iostream>
+
+using namespace std;
 
 int main() {
-    vector<string> menuOptions = {"Inicio", "Opciones", "Solicitar Dato", "Salir"};
-    vector<string> subMenuOptions = {"Configurar", "Volver"};
-    MenuUI menu(80); // Ancho de la consola definido como 80 caracteres
+	vector<string> menuOptions = {"Inicio", "Opciones", "Solicitar Dato", "Salir"};
+	//vector<string> subMenu1 = {"Configurar", "Salir"};
+	MenuUI menu;
+	bool salir = false;
 	
-	SetConsoleCP(65001);
-    SetConsoleOutputCP(65001);
+	menu.setCursor(0);
 	
-    while (true) {
-        menu.mostrarMenu(menuOptions);
-        MenuUI::Tecla tecla = menu.getTecla();
+	while(!salir) {
+		try {
+			menu.actualizarTamanoConsola(); // Asegurarse de que las dimensiones están actualizadas
+		} catch (const runtime_error& e) {
+			cerr << e.what() << endl;
+		}
+		menu.mostrarMenu(menuOptions);
+		MenuUI::Tecla tecla = menu.getTecla();
 
-        if (tecla == MenuUI::ENTER) {
-            int opcionSeleccionada = menu.getCursor();
-            if (opcionSeleccionada == 0) { // Cuando seleccionamos "Inicio" para probar
-                menu.transicionDeslizante(menuOptions, subMenuOptions);
-                while (true) { // Permitir navegar en el submenú sin mostrar la transición de nuevo
-                    menu.mostrarMenu(subMenuOptions);
-                    MenuUI::Tecla subTecla = menu.getTecla();
-                    if (subTecla == MenuUI::ENTER || subTecla == MenuUI::ESCAPE) {
-                        break; // Salir del submenú al presionar Enter o Escape
-                    }
-                    menu.moverCursor(subMenuOptions, subTecla);
-                }
-            } else if (opcionSeleccionada == 2) { // Solicitar Dato
-                string dato = menu.solicitarDato<string>("Ingrese un saludo: ");
-                cout << "				Saludo ingresado: " << dato << endl;
-                cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
-                getch();
-			} else if (opcionSeleccionada == 3) {
-                if (menu.confirmacion("¿Estas seguro que deseas salir?")) {
-                    cout << "Saliendo del menú..." << endl;
-                    break;
-                } else {
-                    menu.mostrarMenu(menuOptions);
-                }
-            }
-        } else if (tecla == MenuUI::ESCAPE) {
-            if (menu.confirmacion("¿Estás seguro que deseas salir?")) {
-                cout << "Saliendo del menú..." << endl;
-                break;
-            }
-        } else {
-            menu.moverCursor(menuOptions, tecla);
-        }
-    }
+		switch(tecla) {
+			case MenuUI::ARRIBA: {
+				menu.moverCursor(menuOptions, tecla);
+				break;
+			}
+			case MenuUI::ABAJO: {
+				menu.moverCursor(menuOptions, tecla);
+				break;
+			}
+			case MenuUI::ENTER: {
+				int opcion = menu.getCursor();
+				switch(opcion) {
+					case 0: {
+						menu.iniciarPantallaDeCarga();
+						getch();
+						menu.detenerPantallaDeCarga();
+						break;
+					}
+					case 1: {
 
-    return 0;
+						break;
+					}
+					case 2: {
+						string dato = menu.solicitarDato("Ingrese un saludo: ");
+						menu.mostrarCentrado("Saludo ingresado: " + dato);
+						menu.separador();
+						getch();
+						break;
+					}
+					case 3: {
+						if(menu.confirmacion("¿Estas seguro que deseas salir?")) {
+							menu.mostrarCentrado("Saliendo del menu...");
+							salir = !salir;
+						}
+
+						break;
+					}
+				}
+				break;
+			}
+			case MenuUI::ESCAPE: {
+				if(menu.confirmacion("¿Estas seguro que deseas salir?")) {
+					menu.mostrarCentrado("Saliendo del menu...");
+					salir = !salir;
+				}
+				break;
+			}
+		}
+	}
+	return 0;
 }

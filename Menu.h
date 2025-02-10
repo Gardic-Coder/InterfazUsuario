@@ -1,82 +1,86 @@
+/*
+	AUTOR: JUAN GARCIA
+
+Esta es una interfaz de menus basica para proyectos. La idea es facilitar el manejo de menus y la interaccion de un programa con el usuario.
+Aun faltan muchas funciones por añadir.
+
+Funciones añadidas:
+	* Ajuste automatico al tamaño de la ventana.
+	* Manejo de entradas del teclado.
+	* Manejo de interfaz por medio de flechas, enter y escape.
+	* Pantalla de carga.
+	* Pantalla de solicitud de dato.
+	* Pantalla de confirmacion de seleccion.
+	* Pantalla de menu para cualquier menu general.
+	* Centrado de textos en pantalla.
+	* Herramientas varias para el embellecimiento de la interfaz:
+		- Codigo de escape ANSI para cambiar colores.
+		- Metodo separador ajustado al tamaño de la pantalla.
+
+Proximas funciones:
+	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
+	* Funciones para el manejo de archivos de audio.
+	* Animaciones de transicion entre menus.
+	* Alinear los textos en el centro con un margen izquierdo.
+	* Interfaz de teclado para mover el cursor de derecha a izquierda.
+	* Mas colores.
+	* Cambiar tamaño de fuente.
+*/
+// Menu.h
 #pragma once
-#include <vector>
-#include <conio.h>
-#include <iomanip>
-#include <string>
 #include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <string>
+#include <vector>
 #include <thread>
-#include <sstream>
-//#include <cstdlib>
-#include <stdexcept>
-#include <type_traits>
 #include <chrono> // Para la funcion sleep
 #include <atomic> // Para banderas atomicas
 
-#define SEPARADOR "---------------------------------------------------------------------------------------------------------------------"
 #define RESET "\033[0m" // Restablece el color de la fuente.
 #define YELLOW "\033[33m" // Cambia el color de la fuente a amarillo.
 #define PURPURA "\033[35m" // Cambia el color de la fuente a purpura.
 #define CYAN "\033[36m" // Cambia el color de la fuente a cian.
 #define RED "\033[31m" // Cambia el color de la fuente a rojo.
 #define GREEN "\033[32m" // Cambia el color de la fuente a verde.
+
 using namespace std;
 
 class MenuUI {
-private:
-    int cursor;
-    int consoleWidth; // Ancho de la consola para centrar el menu horizontalmente
-    atomic<bool> loading; // Para detener la pantalla de carga
 public:
-    MenuUI(int width);
-    enum Tecla { ARRIBA, ABAJO, ENTER, ESCAPE, OTRA };
-    void mostrarMenu(const vector<string>& opcionesMenu) const;
-    Tecla getTecla() const;
-    void moverCursor(const vector<string>& opcionesMenu, MenuUI::Tecla tecla);
-    int getCursor() const;
-    void setCursor(int posicion);
+	MenuUI(); // Constructor.
+    void actualizarTamanoConsola(); // Toma el tamaño de la consola y actualiza las variables.
+	
+	// Entradas de teclado y actualizacion del cursor.
+	enum Tecla { ARRIBA, ABAJO, ENTER, ESCAPE, OTRA };
+	void moverCursor(const vector<string>& opcionesMenu, MenuUI::Tecla tecla);
+    
+    // Pantalla.
+    void mostrarCentrado(const string& mensaje) const;
+    void mostrarMenu(const vector<string>& opcionesMenu);
+    void separador();
+    bool confirmacion(const string& mensaje);
+    string solicitarDato(const string& mensaje); // Método para solicitar datos al usuario
     
     // Metodo para la pantalla de carga y su hilo
-    void pantallaDeCarga();
     void iniciarPantallaDeCarga();
     void detenerPantallaDeCarga();
     
-    // Metodos para transiciones
-    void transicionDeslizante(const vector<string>& menuActual, const vector<string>& siguienteMenu) const;
-    void mostrarMenuConTransicion(const vector<string>& menuActual, const vector<string>& siguienteMenu);
-	
-	bool confirmacion(const string& mensaje);
-	
-	// Método para solicitar datos al usuario
-    template <typename T>
-    T solicitarDato(const string& mensaje) const;
+    // Getters.
+    int getAncho() const;
+    int getAlto() const;
+    int getCursor() const;
+    Tecla getTecla() const;
+    
+    // Setters.
+    void setCursor(int posicion);
+
+private:
+    int ancho; // Ancho de la ventana.
+    int alto; // Alto de la ventana.
+    int cursor; // Posicion del cursor.
+    atomic<bool> loading; // Para detener la pantalla de carga
+    
+    void pantallaDeCarga(); // Este metodo es llamado por iniciarPantallaDeCarga y detenerPantallaDeCarga.
 };
 
-// Implementación de la plantilla en el mismo archivo
-template <typename T>
-T MenuUI::solicitarDato(const string& mensaje) const {
-        T dato;
-        string entrada;
-
-        // Mostrar el mensaje centrado
-        system("cls");
-        cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
-        cout << setw((consoleWidth+25) / 2) << mensaje << endl;
-        cout << setw((consoleWidth+25) / 2) << GREEN << "-> " << RESET;
-        getline(cin, entrada);
-
-        // Si estamos solicitando una cadena, devolvemos la entrada directamente
-        if constexpr (is_same<T, string>::value) {
-            return entrada;
-        } else {
-            stringstream ss(entrada);
-            ss >> dato;
-
-            // Revisar si la conversión falló (para manejar correctamente los textos con espacios)
-            if (ss.fail()) {
-                cerr << "Error: La entrada no es válida." << endl;
-                throw std::invalid_argument("Conversión fallida");
-            }
-
-            return dato;
-        }      
-    }

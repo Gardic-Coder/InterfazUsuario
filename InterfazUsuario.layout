@@ -2,17 +2,28 @@
 Order=0,2,1
 Focused=0
 [Editor_0]
-CursorCol=25
-CursorRow=34
-TopLine=4
+CursorCol=3
+CursorRow=29
+TopLine=1
 LeftChar=1
 [Editor_1]
-CursorCol=1
-CursorRow=145
-TopLine=109
+<<<<<<< HEAD
+CursorCol=141
+CursorRow=4
+TopLine=1
 LeftChar=1
 [Editor_2]
-CursorCol=6
-CursorRow=82
-TopLine=47
+CursorCol=141
+CursorRow=4
+TopLine=1
+=======
+CursorCol=2
+CursorRow=175
+TopLine=139
+LeftChar=1
+[Editor_2]
+CursorCol=50
+CursorRow=39
+TopLine=1
+>>>>>>> parent of 32f6ae4 (.)
 LeftChar=1
