@@ -52,31 +52,40 @@ public:
 };
 
 // Implementación de la plantilla en el mismo archivo
+template <>
+string MenuUI::solicitarDato<string>(const string& mensaje) const {
+    string entrada;
+
+    // Mostrar el mensaje centrado
+    system("cls");
+    cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
+    cout << setw((consoleWidth + 25) / 2) << mensaje << endl;
+    cout << setw((consoleWidth + 25) / 2) << GREEN << "-> " << RESET;
+    getline(cin, entrada);
+
+    return entrada;
+}
+
 template <typename T>
-T MenuUI::solicitarDato(const string& mensaje) const {
-        T dato;
-        string entrada;
+T MenuUI::solicitarDato(const std::string& mensaje) const {
+    string entrada;
+    T dato;
 
-        // Mostrar el mensaje centrado
-        system("cls");
-        cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
-        cout << setw((consoleWidth+25) / 2) << mensaje << endl;
-        cout << setw((consoleWidth+25) / 2) << GREEN << "-> " << RESET;
-        getline(cin, entrada);
+    // Mostrar el mensaje centrado
+    system("cls");
+    cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
+    cout << setw((consoleWidth + 25) / 2) << mensaje << endl;
+    cout << setw((consoleWidth + 25) / 2) << GREEN << "-> " << RESET;
+    getline(cin, entrada);
 
-        // Si estamos solicitando una cadena, devolvemos la entrada directamente
-        if constexpr (is_same<T, string>::value) {
-            return entrada;
-        } else {
-            stringstream ss(entrada);
-            ss >> dato;
+    stringstream ss(entrada);
+    ss >> dato;
 
-            // Revisar si la conversión falló (para manejar correctamente los textos con espacios)
-            if (ss.fail()) {
-                cerr << "Error: La entrada no es válida." << endl;
-                throw std::invalid_argument("Conversión fallida");
-            }
-
-            return dato;
-        }      
+    // Revisar si la conversión falló (para manejar correctamente los textos con espacios)
+    if (ss.fail()) {
+        cerr << "Error: La entrada no es válida." << std::endl;
+        throw invalid_argument("Conversión fallida");
     }
+
+    return dato;
+}
