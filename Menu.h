@@ -6,11 +6,11 @@
 #include <iostream>
 #include <thread>
 #include <sstream>
-//#include <cstdlib>
 #include <stdexcept>
 #include <type_traits>
 #include <chrono> // Para la funcion sleep
 #include <atomic> // Para banderas atomicas
+#include <windows.h>
 
 #define SEPARADOR "---------------------------------------------------------------------------------------------------------------------"
 #define RESET "\033[0m" // Restablece el color de la fuente.
@@ -22,61 +22,104 @@
 using namespace std;
 
 class MenuUI {
-private:
-    int cursor;
-    int consoleWidth; // Ancho de la consola para centrar el menu horizontalmente
-    atomic<bool> loading; // Para detener la pantalla de carga
-public:
-    MenuUI(int width);
-    enum Tecla { ARRIBA, ABAJO, ENTER, ESCAPE, OTRA };
-    void mostrarMenu(const vector<string>& opcionesMenu) const;
-    Tecla getTecla() const;
-    void moverCursor(const vector<string>& opcionesMenu, MenuUI::Tecla tecla);
-    int getCursor() const;
-    void setCursor(int posicion);
-    
-    // Metodo para la pantalla de carga y su hilo
-    void pantallaDeCarga();
-    void iniciarPantallaDeCarga();
-    void detenerPantallaDeCarga();
-    
-    // Metodos para transiciones
-    void transicionDeslizante(const vector<string>& menuActual, const vector<string>& siguienteMenu) const;
-    void mostrarMenuConTransicion(const vector<string>& menuActual, const vector<string>& siguienteMenu);
-	
-	bool confirmacion(const string& mensaje);
-	
-	// Método para solicitar datos al usuario
-    template <typename T>
-    T solicitarDato(const string& mensaje) const;
+	private:
+		int cursor;
+		int ancho;
+		int alto;
+		int consoleWidth; // Ancho de la consola para centrar el menu horizontalmente
+		atomic<bool> loading; // Para detener la pantalla de carga
+	public:
+		MenuUI(int width);
+		enum Tecla { ARRIBA, ABAJO, ENTER, ESCAPE, OTRA };
+		void mostrarMenu(const vector<string>& opcionesMenu);
+		Tecla getTecla() const;
+		void moverCursor(const vector<string>& opcionesMenu, MenuUI::Tecla tecla);
+		int getCursor() const;
+		void setCursor(int posicion);
+
+		// Metodo para la pantalla de carga y su hilo
+		void pantallaDeCarga();
+		void iniciarPantallaDeCarga();
+		void detenerPantallaDeCarga();
+
+		// Metodos para transiciones
+		void transicionDeslizante(const vector<string>& menuActual, const vector<string>& siguienteMenu) const;
+		void mostrarMenuConTransicion(const vector<string>& menuActual, const vector<string>& siguienteMenu);
+
+		bool confirmacion(const string& mensaje);
+
+		// Método para solicitar datos al usuario
+		template <typename T>
+		T solicitarDato(const string& mensaje) const;
+
+		// Metodo para medir el tamaño de la ventana de consola
+		void medirPantalla();
 };
 
 // Implementación de la plantilla en el mismo archivo
-template <typename T>
+/*template <typename T>
 T MenuUI::solicitarDato(const string& mensaje) const {
-        T dato;
-        string entrada;
+	T dato;
+	string entrada;
 
-        // Mostrar el mensaje centrado
-        system("cls");
-        cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
-        cout << setw((consoleWidth+25) / 2) << mensaje << endl;
-        cout << setw((consoleWidth+25) / 2) << GREEN << "-> " << RESET;
-        getline(cin, entrada);
+	// Mostrar el mensaje centrado
+	system("cls");
+	cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
+	cout << setw((consoleWidth+25) / 2) << mensaje << endl;
+	cout << setw((consoleWidth+25) / 2) << GREEN << "-> " << RESET;
+	getline(cin, entrada);
 
-        // Si estamos solicitando una cadena, devolvemos la entrada directamente
-        if constexpr (is_same<T, string>::value) {
-            return entrada;
-        } else {
-            stringstream ss(entrada);
-            ss >> dato;
+	// Si estamos solicitando una cadena, devolvemos la entrada directamente
+	if constexpr (is_same<T, string>::value) {
+		return entrada;
+	} else {
+		stringstream ss(entrada);
+		ss >> dato;
 
-            // Revisar si la conversión falló (para manejar correctamente los textos con espacios)
-            if (ss.fail()) {
-                cerr << "Error: La entrada no es válida." << endl;
-                throw std::invalid_argument("Conversión fallida");
-            }
+		// Revisar si la conversión falló (para manejar correctamente los textos con espacios)
+		if (ss.fail()) {
+			cerr << "Error: La entrada no es válida." << endl;
+			throw std::invalid_argument("Conversión fallida");
+		}
 
-            return dato;
-        }      
+		return dato;
+	}
+}*/
+
+template <>
+std::string MenuUI::solicitarDato<std::string>(const std::string& mensaje) const {
+    std::string entrada;
+
+    // Mostrar el mensaje centrado
+    system("cls");
+    std::cout << std::endl << PURPURA << SEPARADOR << RESET << std::endl << std::endl;
+    std::cout << std::setw((consoleWidth + 25) / 2) << mensaje << std::endl;
+    std::cout << std::setw((consoleWidth + 25) / 2) << GREEN << "-> " << RESET;
+    std::getline(std::cin, entrada);
+
+    return entrada;
+}
+
+template <typename T>
+T MenuUI::solicitarDato(const std::string& mensaje) const {
+    std::string entrada;
+    T dato;
+
+    // Mostrar el mensaje centrado
+    system("cls");
+    std::cout << std::endl << PURPURA << SEPARADOR << RESET << std::endl << std::endl;
+    std::cout << std::setw((consoleWidth + 25) / 2) << mensaje << std::endl;
+    std::cout << std::setw((consoleWidth + 25) / 2) << GREEN << "-> " << RESET;
+    std::getline(std::cin, entrada);
+
+    std::stringstream ss(entrada);
+    ss >> dato;
+
+    // Revisar si la conversión falló (para manejar correctamente los textos con espacios)
+    if (ss.fail()) {
+        std::cerr << "Error: La entrada no es válida." << std::endl;
+        throw std::invalid_argument("Conversión fallida");
     }
+
+    return dato;
+}

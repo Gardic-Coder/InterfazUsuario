@@ -3,8 +3,9 @@
 MenuUI::MenuUI(int width)
     : cursor(0), consoleWidth(width) {}
 
-void MenuUI::mostrarMenu(const vector<string>& opcionesMenu) const {
+void MenuUI::mostrarMenu(const vector<string>& opcionesMenu) {
     system("cls");
+    medirPantalla();
     cout << endl << PURPURA << SEPARADOR << RESET << endl << endl;
     for(size_t i = 0; i < opcionesMenu.size(); ++i) { // Imprime todas las opciones del menu.
         cout << std::setw(((consoleWidth+5) / 2)) << ""; // Asegura que todas empiezan en el mismo margen izquierdo
@@ -141,4 +142,24 @@ bool MenuUI::confirmacion(const string& mensaje) {
             return seleccion == 0;
         }
     }
+}
+
+
+void MenuUI::medirPantalla() {
+	// Crear una estructura que almacenará la información del buffer de consola
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+    // Obtener el handle de la consola estándar de salida
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    // Obtener la información de la pantalla del buffer
+    if (GetConsoleScreenBufferInfo(hConsole, &csbi)) {
+        // Calcular el ancho y el alto de la ventana de consola
+        ancho = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        alto = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    } else {
+        cerr << "No se pudo obtener la información de la ventana de consola" << std::endl;
+    }    
+	cout << "Ancho: " << ancho << " columnas" << std::endl;
+    cout << "Alto: " << alto << " filas" << std::endl;
 }
