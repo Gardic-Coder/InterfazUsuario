@@ -43,6 +43,7 @@ Proximas funciones:
 #define CYAN "\033[36m" // Cambia el color de la fuente a cian.
 #define RED "\033[31m" // Cambia el color de la fuente a rojo.
 #define GREEN "\033[32m" // Cambia el color de la fuente a verde.
+#define BLUE "\033[34m" // Cambia el color de la fuente a azul.
 
 using namespace std;
 
@@ -61,6 +62,7 @@ public:
     void separador();
     bool confirmacion(const string& mensaje);
     string solicitarDato(const string& mensaje); // Método para solicitar datos al usuario
+    bool cambiarColorCursor();
     
     // Metodo para la pantalla de carga y su hilo
     void iniciarPantallaDeCarga();
@@ -74,13 +76,23 @@ public:
     
     // Setters.
     void setCursor(int posicion);
+    void setColorCursor(string color);
 
 private:
     int ancho; // Ancho de la ventana.
     int alto; // Alto de la ventana.
     int cursor; // Posicion del cursor.
     atomic<bool> loading; // Para detener la pantalla de carga
+    string colorCursor;
     
     void pantallaDeCarga(); // Este metodo es llamado por iniciarPantallaDeCarga y detenerPantallaDeCarga.
 };
 
+/*void loading() {
+    std::cout << "Loading..." << std::endl;
+    for (int i = 0; i < 100; ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::cout << "\r" << (i + 1) << "%" << std::flush;
+    }
+    std::cout << std::endl;
+}*/

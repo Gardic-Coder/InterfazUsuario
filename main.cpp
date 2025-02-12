@@ -38,6 +38,7 @@ int main() {
 	MenuUI menu;
 	bool salir = false;
 	
+	
 	menu.setCursor(0);
 	
 	while(!salir) {
@@ -68,11 +69,17 @@ int main() {
 						break;
 					}
 					case 1: {
-
+						if(menu.cambiarColorCursor()) {
+							menu.mostrarCentrado("Color cambiado");
+						} else {
+							menu.mostrarCentrado("No se cambio nada");
+						}
 						break;
 					}
 					case 2: {
 						string dato = menu.solicitarDato("Ingrese un saludo: ");
+						system("cls");
+						menu.separador();
 						menu.mostrarCentrado("Saludo ingresado: " + dato);
 						menu.separador();
 						getch();
