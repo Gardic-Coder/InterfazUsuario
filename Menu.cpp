@@ -31,6 +31,7 @@ Proximas funciones:
 // Implementacion del constructor y los metodos
 MenuUI::MenuUI() : ancho(0), alto(0) {
 	colorCursor = YELLOW;
+	colorSeparador = PURPURA;
 	actualizarTamanoConsola();
 }
 
@@ -96,7 +97,7 @@ void MenuUI::setCursor(int posicion) {
 }
 
 void MenuUI::separador() {
-	cout << endl << endl << PURPURA;
+	cout << endl << endl << colorSeparador;
 	for(int i = 0; i < ancho; i++) {
 		cout  << "-";
 	}
@@ -106,15 +107,25 @@ void MenuUI::separador() {
 void MenuUI::mostrarCentrado(const string& mensaje) const {
 	int longitudMensaje = mensaje.length();
 	int posicionCentrada = (ancho - longitudMensaje) / 2;
-
 	// Imprimir espacios en blanco antes del mensaje para centrarlo
-	cout << string(posicionCentrada, ' ') << mensaje;
+	
+	cout << string(posicionCentrada, ' ') << mensaje << flush;
+}
+
+void MenuUI::centradoVertical(const int numLineas) const {
+	int centrado = (alto - numLineas) / 2;
+	for(int i = 0; i < centrado; i++) {
+		cout << endl;
+	} 
 }
 
 void MenuUI::mostrarMenu(const vector<string>& opcionesMenu) {
 	system("cls");
+	int lineas = opcionesMenu.size() + 10;
+	centradoVertical(lineas);
 	MenuUI::separador();
 	for(size_t i = 0; i < opcionesMenu.size(); ++i) { // Imprime todas las opciones del menu.
+		cout << OCULTAR;
 		if(i == cursor) { // Coloca una flecha en la posicion del cursor.
 			cout << colorCursor; 
 			MenuUI::mostrarCentrado("> " + opcionesMenu[i] + " <");
@@ -129,17 +140,19 @@ void MenuUI::mostrarMenu(const vector<string>& opcionesMenu) {
 
 string MenuUI::solicitarDato(const string& mensaje) {
     string entrada;
-
+	
     // Mostrar el mensaje centrado
     system("cls");
+    centradoVertical(12);
     MenuUI::separador();
     mostrarCentrado(mensaje);
     cout << endl << GREEN;
     mostrarCentrado("-> ");
-    cout << "\0337";
+    cout << GUARDAR;
     MenuUI::separador();
-    cout << "\0338";
+    cout << CARGAR << MOSTRAR;
     getline(cin, entrada);
+    cout << OCULTAR;
 	
     return entrada;
 }
@@ -149,6 +162,7 @@ bool MenuUI::confirmacion(const string& mensaje) {
 	int seleccion = 0;
 	while (true) {
 		system("cls");
+		centradoVertical(13);
 		MenuUI::separador();
 		MenuUI::mostrarCentrado(mensaje);
 		cout << endl;
@@ -179,17 +193,22 @@ void MenuUI::pantallaDeCarga() {
 	const vector<string> colors = {RED, GREEN, YELLOW, CYAN, PURPURA, BLUE};
 	int frameIndex = 0;
 	int colorIndex = 0;
-
+	
+	system("cls");
+	centradoVertical(12);
+	MenuUI::separador();
+	MenuUI::mostrarCentrado(" Cargando ");
+	cout << endl << GUARDAR << colors[colorIndex];
+	MenuUI::mostrarCentrado(frames[frameIndex]);
+	cout << RESET;
+	MenuUI::separador();
 	while (loading) {
-		system("cls");
-		MenuUI::separador();
-		MenuUI::mostrarCentrado(" Cargando ");
-		cout << endl << colors[colorIndex];
-		MenuUI::mostrarCentrado(frames[frameIndex]);
-		cout << RESET; 
+		cout << OCULTAR;
 		frameIndex = (frameIndex + 1) % frames.size();
 		colorIndex = (colorIndex + 1) % colors.size();
-		MenuUI::separador();
+		cout << CARGAR << colors[colorIndex];
+		MenuUI::mostrarCentrado(frames[frameIndex]);
+		cout << RESET;
 		this_thread::sleep_for(chrono::milliseconds(100));
 	}
 }
@@ -217,6 +236,7 @@ bool MenuUI::cambiarColorCursor() {
 	
 	while (true) {
 		system("cls");
+		centradoVertical(18);
 		MenuUI::separador();
 		MenuUI::mostrarCentrado("Elige un color:");
 		cout << endl;
@@ -238,6 +258,44 @@ bool MenuUI::cambiarColorCursor() {
 			seleccion++;
 		} else if (tecla == ENTER) {
 			setColorCursor(colors[seleccion]);
+			return true;
+		} else if (tecla == ESCAPE) return false;
+	}
+}
+
+void MenuUI::setColorSeparador(string color) {
+	colorSeparador = color;
+}
+
+bool MenuUI::cambiarColorSeparador() {
+	const vector<string> colors = {RESET, RED, GREEN, YELLOW, CYAN, PURPURA, BLUE};
+	const vector<string> opciones = {"Blanco", "Rojo", "Verde", "Amarillo", "Cian", "Magenta", "Azul"};
+	int seleccion = 0;
+	
+	while (true) {
+		system("cls");
+		centradoVertical(18);
+		MenuUI::separador();
+		MenuUI::mostrarCentrado("Elige un color:");
+		cout << endl;
+		for (int i = 0; i < opciones.size(); ++i) {
+			if (i == seleccion) {
+				cout << colorCursor; 
+				MenuUI::mostrarCentrado("> " + opciones[i] + " <");
+				cout << RESET;
+			} else {
+				MenuUI::mostrarCentrado(opciones[i]);
+			}
+			if(i < opciones.size() - 1) cout << endl;
+		}
+		MenuUI::separador();
+		Tecla tecla = MenuUI::getTecla();
+		if (tecla == ARRIBA && seleccion > 0) {
+			seleccion--;
+		} else if (tecla == ABAJO && seleccion < opciones.size() - 1) {
+			seleccion++;
+		} else if (tecla == ENTER) {
+			setColorSeparador(colors[seleccion]);
 			return true;
 		} else if (tecla == ESCAPE) return false;
 	}

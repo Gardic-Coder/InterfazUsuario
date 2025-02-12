@@ -34,13 +34,13 @@ using namespace std;
 
 int main() {
 	vector<string> menuOptions = {"Inicio", "Opciones", "Solicitar Dato", "Salir"};
-	//vector<string> subMenu1 = {"Configurar", "Salir"};
+	vector<string> subMenu1 = {"Cursor", "Separador"};
 	MenuUI menu;
 	bool salir = false;
-	
-	
+
+
 	menu.setCursor(0);
-	
+
 	while(!salir) {
 		try {
 			menu.actualizarTamanoConsola(); // Asegurarse de que las dimensiones están actualizadas
@@ -69,16 +69,51 @@ int main() {
 						break;
 					}
 					case 1: {
-						if(menu.cambiarColorCursor()) {
-							menu.mostrarCentrado("Color cambiado");
-						} else {
-							menu.mostrarCentrado("No se cambio nada");
+						menu.setCursor(0);
+						while(!salir) {
+							try {
+								menu.actualizarTamanoConsola(); // Asegurarse de que las dimensiones están actualizadas
+							} catch (const runtime_error& e) {
+								cerr << e.what() << endl;
+							}
+							menu.mostrarMenu(subMenu1);
+							tecla = menu.getTecla();
+							switch(tecla) {
+								case MenuUI::ARRIBA: {
+									menu.moverCursor(subMenu1, tecla);
+									break;
+								}
+								case MenuUI::ABAJO: {
+									menu.moverCursor(subMenu1, tecla);
+									break;
+								}
+								case MenuUI::ENTER: {
+									int opcion = menu.getCursor();
+									if(opcion == 0) {
+										menu.cambiarColorCursor();
+									} else {
+										menu.cambiarColorSeparador();
+									}
+									break;
+								}
+								case MenuUI::ESCAPE: {
+									salir = !salir;
+									break;
+								}
+							}
+							/*if() {
+								menu.mostrarCentrado("Color cambiado");
+							} else {
+								menu.mostrarCentrado("No se cambio nada");
+							}*/
 						}
+						salir = !salir;
 						break;
 					}
 					case 2: {
 						string dato = menu.solicitarDato("Ingrese un saludo: ");
 						system("cls");
+						menu.centradoVertical(11);
 						menu.separador();
 						menu.mostrarCentrado("Saludo ingresado: " + dato);
 						menu.separador();

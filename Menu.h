@@ -45,24 +45,33 @@ Proximas funciones:
 #define GREEN "\033[32m" // Cambia el color de la fuente a verde.
 #define BLUE "\033[34m" // Cambia el color de la fuente a azul.
 
+#define GUARDAR "\0337" // Guarda la posicion del cursor.
+#define CARGAR "\0338" // Mueve el cursor a la posicion cargada.
+#define OCULTAR "\033[?25l" // Hace el cursor invisible.
+#define MOSTRAR "\033[?25h" // Hace el cursor visible.
+
 using namespace std;
 
 class MenuUI {
 public:
 	MenuUI(); // Constructor.
-    void actualizarTamanoConsola(); // Toma el tamaño de la consola y actualiza las variables.
-	
+    
 	// Entradas de teclado y actualizacion del cursor.
 	enum Tecla { ARRIBA, ABAJO, ENTER, ESCAPE, OTRA };
 	void moverCursor(const vector<string>& opcionesMenu, MenuUI::Tecla tecla);
     
     // Pantalla.
     void mostrarCentrado(const string& mensaje) const;
+    void centradoVertical(const int numLineas) const;
     void mostrarMenu(const vector<string>& opcionesMenu);
     void separador();
     bool confirmacion(const string& mensaje);
     string solicitarDato(const string& mensaje); // Método para solicitar datos al usuario
+    
+    // Configuracion.
     bool cambiarColorCursor();
+    bool cambiarColorSeparador();
+    void actualizarTamanoConsola(); // Toma el tamaño de la consola y actualiza las variables.
     
     // Metodo para la pantalla de carga y su hilo
     void iniciarPantallaDeCarga();
@@ -77,6 +86,7 @@ public:
     // Setters.
     void setCursor(int posicion);
     void setColorCursor(string color);
+    void setColorSeparador(string color);
 
 private:
     int ancho; // Ancho de la ventana.
@@ -84,6 +94,7 @@ private:
     int cursor; // Posicion del cursor.
     atomic<bool> loading; // Para detener la pantalla de carga
     string colorCursor;
+    string colorSeparador;
     
     void pantallaDeCarga(); // Este metodo es llamado por iniciarPantallaDeCarga y detenerPantallaDeCarga.
 };
