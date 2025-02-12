@@ -34,7 +34,7 @@ using namespace std;
 
 int main() {
 	vector<string> menuOptions = {"Inicio", "Opciones", "Solicitar Dato", "Salir"};
-	vector<string> subMenu1 = {"Cursor", "Separador"};
+	vector<string> subMenu1 = {"Color del Cursor", "Color del Separador", "Caracter del Separador"};
 	MenuUI menu;
 	bool salir = false;
 
@@ -91,8 +91,11 @@ int main() {
 									int opcion = menu.getCursor();
 									if(opcion == 0) {
 										menu.cambiarColorCursor();
-									} else {
+									} else if(opcion == 1) {
 										menu.cambiarColorSeparador();
+									} else {
+										string caracter = menu.solicitarDato("Ingrese un separador nuevo: ");
+										menu.setCaracterSeparador(caracter);
 									}
 									break;
 								}

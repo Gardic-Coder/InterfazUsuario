@@ -16,9 +16,9 @@ Funciones añadidas:
 	* Herramientas varias para el embellecimiento de la interfaz:
 		- Codigo de escape ANSI para cambiar colores.
 		- Metodo separador ajustado al tamaño de la pantalla.
+	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
 
 Proximas funciones:
-	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
 	* Funciones para el manejo de archivos de audio.
 	* Animaciones de transicion entre menus.
 	* Alinear los textos en el centro con un margen izquierdo.
@@ -32,6 +32,7 @@ Proximas funciones:
 MenuUI::MenuUI() : ancho(0), alto(0) {
 	colorCursor = YELLOW;
 	colorSeparador = PURPURA;
+	caracterSeparador = "-";
 	actualizarTamanoConsola();
 }
 
@@ -98,8 +99,9 @@ void MenuUI::setCursor(int posicion) {
 
 void MenuUI::separador() {
 	cout << endl << endl << colorSeparador;
-	for(int i = 0; i < ancho; i++) {
-		cout  << "-";
+	int n = ancho / caracterSeparador.length();
+	for(int i = 0; i < n; i++) {
+		cout  << caracterSeparador;
 	}
 	cout << endl << endl << RESET;
 }
@@ -299,4 +301,8 @@ bool MenuUI::cambiarColorSeparador() {
 			return true;
 		} else if (tecla == ESCAPE) return false;
 	}
+}
+
+void MenuUI::setCaracterSeparador(string caracter) {
+	caracterSeparador = caracter;
 }

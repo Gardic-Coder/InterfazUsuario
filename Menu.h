@@ -87,6 +87,7 @@ public:
     void setCursor(int posicion);
     void setColorCursor(string color);
     void setColorSeparador(string color);
+    void setCaracterSeparador(string caracter);
 
 private:
     int ancho; // Ancho de la ventana.
@@ -95,6 +96,7 @@ private:
     atomic<bool> loading; // Para detener la pantalla de carga
     string colorCursor;
     string colorSeparador;
+    string caracterSeparador;
     
     void pantallaDeCarga(); // Este metodo es llamado por iniciarPantallaDeCarga y detenerPantallaDeCarga.
 };
