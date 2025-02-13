@@ -1,5 +1,7 @@
 /*
-	AUTOR: JUAN GARCIA
+	IMPORTANTE: Algunas funciones requieren una terminal que soporte funcionalidades avanzadas de codigo de escape ANSI.
+
+	AUTOR: JUAN GARCIA (Gardic-Coder)
 
 Esta es una interfaz de menus basica para proyectos. La idea es facilitar el manejo de menus y la interaccion de un programa con el usuario.
 Este codigo de ejemplo sirve para mostrar las funcionalidades que trae Menu.h
@@ -17,14 +19,14 @@ Funciones añadidas:
 	* Herramientas varias para el embellecimiento de la interfaz:
 		- Codigo de escape ANSI para cambiar colores.
 		- Metodo separador ajustado al tamaño de la pantalla.
+	* Mas colores.
+	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
 
 Proximas funciones:
-	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
 	* Funciones para el manejo de archivos de audio.
 	* Animaciones de transicion entre menus.
 	* Alinear los textos en el centro con un margen izquierdo.
 	* Interfaz de teclado para mover el cursor de derecha a izquierda.
-	* Mas colores.
 	* Cambiar tamaño de fuente.
 */
 #include "Menu.h"
@@ -34,7 +36,7 @@ using namespace std;
 
 int main() {
 	vector<string> menuOptions = {"Inicio", "Opciones", "Solicitar Dato", "Salir"};
-	vector<string> subMenu1 = {"Color del Cursor", "Color del Separador", "Caracter del Separador"};
+	vector<string> subMenu1 = {"Color del Cursor", "Color del Separador", "Caracter del Separador", "Color de la Fuente"};
 	MenuUI menu;
 	bool salir = false;
 
@@ -90,12 +92,17 @@ int main() {
 								case MenuUI::ENTER: {
 									int opcion = menu.getCursor();
 									if(opcion == 0) {
-										menu.cambiarColorCursor();
+										string color = menu.solicitarDato("Ingrese un numero (0-255) para cambiar de color: ");
+										menu.setColorCursor(color);
 									} else if(opcion == 1) {
-										menu.cambiarColorSeparador();
-									} else {
+										string color = menu.solicitarDato("Ingrese un numero (0-255) para cambiar de color: ");
+										menu.setColorSeparador(color);
+									} else if(opcion == 2){
 										string caracter = menu.solicitarDato("Ingrese un separador nuevo: ");
 										menu.setCaracterSeparador(caracter);
+									} else {
+										string color = menu.solicitarDato("Ingrese un numero (0-255) para cambiar de color: ");
+										menu.setColorFuente(color);
 									}
 									break;
 								}

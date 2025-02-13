@@ -1,5 +1,7 @@
 /*
-	AUTOR: JUAN GARCIA
+	IMPORTANTE: Algunas funciones requieren una terminal que soporte funcionalidades avanzadas de codigo de escape ANSI.
+
+	AUTOR: JUAN GARCIA (Gardic-Coder)
 
 Esta es una interfaz de menus basica para proyectos. La idea es facilitar el manejo de menus y la interaccion de un programa con el usuario.
 Aun faltan muchas funciones por añadir.
@@ -16,14 +18,14 @@ Funciones añadidas:
 	* Herramientas varias para el embellecimiento de la interfaz:
 		- Codigo de escape ANSI para cambiar colores.
 		- Metodo separador ajustado al tamaño de la pantalla.
+	* Mas colores.
+	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
 
 Proximas funciones:
-	* Funciones para que el usuario pueda personalizar la interfaz durante la ejecucion del programa.
 	* Funciones para el manejo de archivos de audio.
 	* Animaciones de transicion entre menus.
 	* Alinear los textos en el centro con un margen izquierdo.
 	* Interfaz de teclado para mover el cursor de derecha a izquierda.
-	* Mas colores.
 	* Cambiar tamaño de fuente.
 */
 // Menu.h
@@ -38,12 +40,11 @@ Proximas funciones:
 #include <atomic> // Para banderas atomicas
 
 #define RESET "\033[0m" // Restablece el color de la fuente.
-#define YELLOW "\033[33m" // Cambia el color de la fuente a amarillo.
-#define PURPURA "\033[35m" // Cambia el color de la fuente a purpura.
-#define CYAN "\033[36m" // Cambia el color de la fuente a cian.
-#define RED "\033[31m" // Cambia el color de la fuente a rojo.
-#define GREEN "\033[32m" // Cambia el color de la fuente a verde.
-#define BLUE "\033[34m" // Cambia el color de la fuente a azul.
+#define COD_ESC "\033["
+#define COLORES "\033[38;5;" // Codigo de escape ANSI para establecer color de texto. Se usa "COLORES << Entero 0-255 << FINAL"
+#define FINAL "m" // Final del codigo de escape ANSI para graficos.
+#define ACOPLE ";"
+#define PARPADEO "5" // Agrega parpadeo al texto.
 
 #define GUARDAR "\0337" // Guarda la posicion del cursor.
 #define CARGAR "\0338" // Mueve el cursor a la posicion cargada.
@@ -51,6 +52,14 @@ Proximas funciones:
 #define MOSTRAR "\033[?25h" // Hace el cursor visible.
 
 using namespace std;
+
+//const RESET = "\033[0m";
+//const string COLORES = "\033[38;5;";
+//const string FINAL = "m";
+/*const COD_ESC = "\033[";
+const RED =
+const YELLOW = "33";
+const */
 
 class MenuUI {
 public:
@@ -69,8 +78,6 @@ public:
     string solicitarDato(const string& mensaje); // Método para solicitar datos al usuario
     
     // Configuracion.
-    bool cambiarColorCursor();
-    bool cambiarColorSeparador();
     void actualizarTamanoConsola(); // Toma el tamaño de la consola y actualiza las variables.
     
     // Metodo para la pantalla de carga y su hilo
@@ -87,7 +94,9 @@ public:
     void setCursor(int posicion);
     void setColorCursor(string color);
     void setColorSeparador(string color);
+    void setColorFuente(string color);
     void setCaracterSeparador(string caracter);
+    
 
 private:
     int ancho; // Ancho de la ventana.
@@ -96,6 +105,7 @@ private:
     atomic<bool> loading; // Para detener la pantalla de carga
     string colorCursor;
     string colorSeparador;
+    string colorFuente;
     string caracterSeparador;
     
     void pantallaDeCarga(); // Este metodo es llamado por iniciarPantallaDeCarga y detenerPantallaDeCarga.
