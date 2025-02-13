@@ -39,6 +39,14 @@ MenuUI::MenuUI() : ancho(0), alto(0) {
 	actualizarTamanoConsola();
 }
 
+MenuUI::MenuUI(string cursor, string _colorSeparador, string fuente, string _caracterSeparador) : ancho(0), alto(0) {
+	colorCursor = cursor;
+	colorSeparador = _colorSeparador;
+	colorFuente = fuente;
+	caracterSeparador = _caracterSeparador;
+	actualizarTamanoConsola();
+}
+
 void MenuUI::actualizarTamanoConsola() {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

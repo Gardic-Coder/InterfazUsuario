@@ -64,6 +64,7 @@ const */
 class MenuUI {
 public:
 	MenuUI(); // Constructor.
+	MenuUI(string cursor, string _colorSeparador, string fuente, string _caracterSeparador);
     
 	// Entradas de teclado y actualizacion del cursor.
 	enum Tecla { ARRIBA, ABAJO, ENTER, ESCAPE, OTRA };
